@@ -16,19 +16,9 @@ from sklearn.ensemble import RandomForestClassifier
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
 
-
-def performanceMargin(stock, sp500,margin):       ###identify outperforming stocks
-  difference = stock - sp500
-  if difference > margin:
-    return 1
-  else:
-    return 0
-
-def buildDataSet():
-
   #initialize list of features
 
-  features = ['DE Ratio', 'Trailing P/E', 'Price/Sales', 
+features = ['DE Ratio', 'Trailing P/E', 'Price/Sales', 
       'Price/Book', 'Profit Margin', 'Operating Margin', 
       'Return on Assets', 'Return on Equity', 'Revenue Per Share', 
       'Market Cap', 'Enterprise Value', 'Forward P/E',
@@ -41,6 +31,18 @@ def buildDataSet():
        'Held by Institutions', 'Shares Short (as of', 'Short Ratio', 
        'Short % of Float', 'Shares Short (prior ']
 
+
+def performanceMargin(stock, sp500):       ###identify outperforming stocks
+  #set performance margin
+  margin = 15
+  difference = stock - sp500
+  if difference > margin:
+    return 1
+  else:
+    return 0
+
+def buildDataSet():
+
   ###select dataset     
   # data_df = pd.DataFrame.from_csv("key_stats_reduced_enhanced.csv")
   data_df = pd.DataFrame.from_csv("key_stats_full_enhanced.csv")
@@ -48,11 +50,9 @@ def buildDataSet():
   data_df = data_df.reindex(np.random.permutation(data_df.index))
   data_df = data_df.replace("NaN",0).replace("N/A",0)
 
-  #set performance margin
-  margin = 15
 
   #get outperforming stocks
-  data_df["Status2"] = list(map(performanceMargin, data_df["stock_price_change"], data_df["sp500_price_change"],margin))
+  data_df["Status2"] = list(map(performanceMargin, data_df["stock_p_change"], data_df["sp500_p_change"]))
   
   X = np.array(data_df[features].values)#.tolist())
   X = preprocessing.scale(X)
@@ -79,7 +79,7 @@ def analysis():       ###function for generating outperforming stocks
 
   data_df = pd.DataFrame.from_csv("forward_sample_full.csv")
   data_df = data_df.replace("NaN",0).replace("N/A",0)
-  X = np.array(data_df[FEATURES].values)
+  X = np.array(data_df[features].values)
   X = preprocessing.scale(X)
   Z = data_df["Ticker"].values.tolist()
   invest_list = []
