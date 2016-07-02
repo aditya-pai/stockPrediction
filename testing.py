@@ -52,7 +52,7 @@ def buildDataSet():
 	y= (data_df["Status"].replace("underperform",0).replace("outperform",1).values.tolist())
 	X=preprocessing.scale(X)
 
-	Z=np.array(data_df[["stock_price_change","sp500_price_change"]])
+	Z=np.array(data_df[["stock_p_change","sp500_p_change"]])
 	return X,y,Z
 
 
